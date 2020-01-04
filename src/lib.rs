@@ -5,7 +5,7 @@ mod tests;
 
 use std::rc::Rc;
 
-/// An interface for immediate evaluation (without caching) for any types and cached (lazy) evaluation for types that implement [`Clone`], including those that implement [`Copy`], integers and floats being the simplest examples.
+/// An interface for immediate evaluation (without caching) for any types and cached (lazy) evaluation for types that implement `Clone`, including those that implement [`Copy`], integers and floats being the simplest examples.
 pub trait Evaluator {
     /// The type that the evaluator evaluates to.
     type Output;
@@ -15,7 +15,7 @@ pub trait Evaluator {
     fn eval(&mut self) -> Self::Output;
 }
 
-/// An interface for cached (lazy) evaluation for types that do not implement [`Clone`] (note that `Clone` is a supertrait of [`Copy`]).
+/// An interface for cached (lazy) evaluation for types that do not implement `Clone` (note that `Clone` is a supertrait of `Copy`).
 pub trait RcEvaluator {
     /// The type that the evaluator evaluates to.
     type Output;
@@ -40,7 +40,7 @@ where Cl: FnMut() -> Out {
 impl<Out, Cl> Evaluator for ImmEval<Out, Cl>
 where Cl: FnMut() -> Out {
     type Output = Out;
-    /// Evaluates and returns the result. Because evaluators may possibly involve caching, a mutable borrow of `self` is required by the [`Evaluator`] trait, though immediate evaluators do not involve any.
+    /// Evaluates and returns the result. Because evaluators may possibly involve caching, a mutable borrow of `self` is required by the [`Evaluator`](trait.Evaluator.html) trait, though immediate evaluators do not involve any.
     /// # Panics
     /// Panicking of this function is not defined or restricted and depends on the closure.
     fn eval(&mut self) -> Self::Output {
@@ -148,7 +148,7 @@ impl<Out> From<Out> for DummyEval<Out> {
 impl<Out> Evaluator for DummyEval<Out>
 where Out: Clone {
     type Output = Out;
-    /// Evaluates and returns the result. **This includes the overhead of cloning the value, because the fixed value must be preserved.
+    /// Evaluates and returns the result. **This includes the overhead of cloning the value, because the fixed value must be preserved.**
     ///
     /// Because caching evaluators, as their name suggests, store the cached value inside themselves, a mutable borrow of `self` is required.
     /// # Panics
@@ -159,7 +159,7 @@ where Out: Clone {
 }/*
 impl<Out> RcEvaluator for DummyEval<Out> {
     type Output = Out;
-    /// Evaluates and returns an [`std::rc::Rc`] to the result. Because evaluators may possibly involve caching, a mutable borrow of `self` is required by the [`Evaluator`] trait, though dummy evaluators obviously do not involve any, as no values are produced during evaluation.
+    /// Evaluates and returns an [`std::rc::Rc`] to the result. Because evaluators may possibly involve caching, a mutable borrow of `self` is required by the [`Evaluator`](trait.Evaluator.html) trait, though dummy evaluators obviously do not involve any, as no values are produced during evaluation.
     /// # Panics
     /// Guaranteed to never panic.
     fn eval(&mut self) -> Rc<Self::Output> {

@@ -1,8 +1,12 @@
 [package]
 name = "evaluator"
-version = "0.2.0"
+version = "0.2.2"
 authors = ["Kotauskas <v.toncharov@gmail.com>"]
 edition = "2018"
+description = "Provides interfaces and implementations for logic constructs that return values without accepting arguments, either via closure captures, global state, calculation or otherwise."
+license = "CC0-1.0"
+documentation = "https://docs.rs/evaluator"
+repository = "https://github.com/kotauskas/evaluator.rs"
 
 [lib]
 name = "evaluator"
