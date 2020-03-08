@@ -1,64 +1,65 @@
-use super::*;
+use crate::*;
+use core::cell::Cell;
 
 #[test]
 fn imm_eval() {
-    let mut counter = 0;
+    let counter = Cell::new(0);
     {
-        let mut eval = ImmEval::from(|| {
-            counter += 1;
-            counter
+        let eval = ImmEval::from(|| {
+            counter.set(counter.get() + 1);
+            counter.get()
         });
-        
+
         eval.eval();
         eval.eval();
     }
-    assert_eq!(counter, 2);
+    assert_eq!(counter.get(), 2);
 }
 
 #[test]
 fn eval() {
-    let mut counter = 0;
+    let counter = Cell::new(0);
     {
-        let mut eval = Eval::from(|| {
-            counter += 1;
-            counter
+        let eval = Eval::from(|| {
+            counter.set(counter.get() + 1);
+            counter.get()
         });
-        
+
         eval.eval();
         eval.eval();
         eval.flush();
         eval.eval();
     }
-    assert_eq!(counter, 2);
+    assert_eq!(counter.get(), 2);
 }
 
 #[test]
 fn rc_eval() {
-    let mut counter = 0;
-    let mut first: String;
-    let mut second: String;
-    let mut third: String;
-    let mut fourth: String;
+    let counter = Cell::new(0);
+    let first: &str;
+    let second: &str;
+    let third: &str;
+    let fourth: &str;
     {
-        let mut eval = Eval::from(|| {
-            counter += 1;
-            match counter {
-                1 => String::from("One!"),
-                2 => String::from("Two!"),
-                _ => String::from("Other!")
+        let eval = RcEval::from(|| {
+            counter.set(counter.get() + 1);
+            match counter.get() {
+                1 => "One!",
+                2 => "Two!",
+                _ => "Other!"
             }
         });
-        
-        first = eval.eval();
-        second = eval.eval();
+
+        first = *eval.rc_eval();
+        second = *eval.rc_eval();
         eval.flush();
-        third = eval.eval();
+        third = *eval.rc_eval();
         eval.flush();
-        fourth = eval.eval();
+        fourth = *eval.rc_eval();
     }
-    assert_eq!(counter, 3);
-    assert_eq!(first.as_str(), "One!");
-    assert_eq!(second.as_str(), "One!");
-    assert_eq!(third.as_str(), "Two!");
-    assert_eq!(fourth.as_str(), "Other!");
+    assert_eq!(counter.get(), 3);
+    assert_eq!(first, "One!");
+    assert_eq!(second, "One!");
+    assert_eq!(third, "Two!");
+    assert_eq!(fourth, "Other!");
 }
